@@ -110,9 +110,6 @@ public class Floristeria {
         return tickets;
     }
 
-    /*public void mostrarComprasAntiguas() {
-        tickets.forEach(System.out::println);
-    }*/
     public void mostrarComprasAntiguas() {
         System.out.println("Número de tickets: " + tickets.size());
         tickets.forEach(System.out::println);

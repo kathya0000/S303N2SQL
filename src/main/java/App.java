@@ -60,8 +60,6 @@ public class App {
                     break;
 
                 case 6:
-                    /*floristeria.mostrarComprasAntiguas();
-                    break;*/
                     try {
                         floristeria.actualizarTicketsDesdeBaseDeDatos(ticketDAO);
                     } catch (SQLException e) {

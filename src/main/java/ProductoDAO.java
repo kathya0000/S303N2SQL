@@ -72,8 +72,6 @@ public abstract class ProductoDAO {
         return null;
     }
 
-
-
     protected abstract String getTableName();
     protected abstract Producto mapResultSetToProducto(ResultSet rs) throws SQLException;
     public abstract List<? extends Producto> getAll();
