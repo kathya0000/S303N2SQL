@@ -43,20 +43,20 @@ public class App {
                     break;
 
                 case 3:
-                    floristeria.mostrarStock();
+                    floristeria.mostrarStock(arbolDAO, florDAO, decoracionDAO);
                     break;
 
                 case 4:
                     System.out.println("Valor total: " + floristeria.valorTotal());
                     break;
 
-                case 5:
+                /*case 5:
                     try {
                         crearTicketCompra(scanner, floristeria, connection, arbolDAO, florDAO, decoracionDAO);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    break;
+                    break;*/
 
                 case 6:
                     floristeria.mostrarComprasAntiguas();
@@ -162,7 +162,8 @@ public class App {
         floristeria.añadirProducto(producto);
     }
 
-    private static void  retirarProducto(Scanner scanner, Floristeria floristeria, ProductoDAO arbolDAO, ProductoDAO florDAO, ProductoDAO decoracionDAO) {
+    private static void  retirarProducto( Scanner scanner, Floristeria floristeria, ProductoDAO arbolDAO, ProductoDAO florDAO, ProductoDAO decoracionDAO) {
+
         System.out.print("¿Qué tipo de producto deseas eliminar? (arbol, flor, decoracion): ");
         String tipo = scanner.next();
 
@@ -170,7 +171,7 @@ public class App {
         int id = scanner.nextInt();
 
         // Primero, intenta obtener el producto de la instancia de Floristeria
-        Producto producto = floristeria.obtenerProducto(id);
+        Producto producto = floristeria.obtenerProducto(id, arbolDAO, florDAO, decoracionDAO);
 
         if (producto != null) {
             switch (tipo) {
@@ -208,7 +209,7 @@ public class App {
     }
 
 
-    private static void crearTicketCompra(Scanner scanner, Floristeria floristeria, Connection connection, ProductoDAO arbolDAO, ProductoDAO florDAO, ProductoDAO decoracionDAO) throws Exception {
+   /* private static void crearTicketCompra(Scanner scanner, Floristeria floristeria, Connection connection, ProductoDAO arbolDAO, ProductoDAO florDAO, ProductoDAO decoracionDAO) throws Exception {
         Ticket ticket = new Ticket();
         TicketDAO ticketDAO = new TicketDAO(connection, (ArbolDAO) arbolDAO, (FlorDAO) florDAO, (DecoracionDAO) decoracionDAO);
         String respuesta;
@@ -217,7 +218,8 @@ public class App {
             System.out.print("ID del producto a comprar: ");
             int idProducto = scanner.nextInt();
 
-            Producto productoAComprar = floristeria.obtenerProducto(idProducto);
+            int id;
+            Producto productoAComprar = floristeria.obtenerProducto(id,arbolDAO, florDAO, decoracionDAO);
 
             if (productoAComprar != null) {
                 ticket.añadirProducto(productoAComprar);
@@ -230,7 +232,7 @@ public class App {
         } while (respuesta.equalsIgnoreCase("si"));
 
         ticketDAO.guardar(ticket);
-    }
+    }*/
 
     private static void guardarEnBaseDeDatos(Floristeria floristeria) {
         try {

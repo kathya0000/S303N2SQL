@@ -1,7 +1,12 @@
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Floristeria {
+    private ProductoDAO arbolDAO;
+    private ProductoDAO florDAO;
+    private ProductoDAO decoracionDAO;
+
     private static Floristeria instancia = null;
     private List<Producto> productos = new ArrayList<>();
     private List<Ticket> tickets = new ArrayList<>();
@@ -17,6 +22,7 @@ public class Floristeria {
         return instancia;
     }
 
+
     public void añadirProducto(Producto producto) {
         System.out.println("Añadiendo producto con ID: " + producto.getId());
         productos.add(producto);
@@ -26,21 +32,39 @@ public class Floristeria {
         productos.removeIf(p -> p.getId() == id);
     }
 
-    public void mostrarStock() {
-        for (Producto producto : productos) {
-            System.out.println(producto.toString());
+    public void mostrarStock(ProductoDAO arbolDAO, ProductoDAO florDAO, ProductoDAO decoracionDAO) {
+        for (Producto arbol : arbolDAO.getAll()) {
+            System.out.println(arbol.toString());
+        }
+        for (Producto flor : florDAO.getAll()) {
+            System.out.println(flor.toString());
+        }
+        for (Producto decoracion : decoracionDAO.getAll()) {
+            System.out.println(decoracion.toString());
         }
     }
 
-    public Producto obtenerProducto(int id) {
+    public Producto obtenerProducto(int id, ProductoDAO arbolDAO, ProductoDAO florDAO, ProductoDAO decoracionDAO) {
         System.out.println("Buscando producto con ID: " + id);
-        for (Producto producto : productos) {
-            if (producto.getId() == id) {
-                return producto;
-            }
+
+        Producto producto = arbolDAO.get(id);
+        if (producto != null) {
+            return producto;
         }
+
+        producto = florDAO.get(id);
+        if (producto != null) {
+            return producto;
+        }
+
+        producto = decoracionDAO.get(id);
+        if (producto != null) {
+            return producto;
+        }
+
         return null;
     }
+
 
     public List<Producto> obtenerProductos() {
         return productos;
