@@ -47,7 +47,7 @@ public class App {
                     break;
 
                 case 4:
-                    System.out.println("Valor total: " + floristeria.valorTotal());
+                    System.out.println("Valor total: " + floristeria.valorTotal(arbolDAO, florDAO, decoracionDAO));
                     break;
 
                 /*case 5:

@@ -37,6 +37,6 @@ class Flor extends Producto {
 
     @Override
     public String toString() {
-        return "Flor de color " + color + ". Precio: " + precio;
+        return "Flor "   +   nombre   +   " de color "   +  color  +   ". Precio: "   +  precio;
     }
 }

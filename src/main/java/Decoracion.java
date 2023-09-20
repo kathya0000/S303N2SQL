@@ -36,6 +36,6 @@ class Decoracion extends Producto {
 
     @Override
     public String toString() {
-        return "Decoración de material " + material + ". Precio: " + precio;
+        return "Decoración "  + nombre +  " de material "  + material +  ". Precio:  " + precio;
     }
 }

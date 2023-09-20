@@ -70,9 +70,17 @@ public class Floristeria {
         return productos;
     }
 
-    public double valorTotal() {
+    /*public double valorTotal() {
         return productos.stream().mapToDouble(Producto::getPrecio).sum();
+    }*/
+    public double valorTotal(ProductoDAO arbolDAO, ProductoDAO florDAO, ProductoDAO decoracionDAO) {
+        double valorArboles = arbolDAO.getAll().stream().mapToDouble(Producto::getPrecio).sum();
+        double valorFlores = florDAO.getAll().stream().mapToDouble(Producto::getPrecio).sum();
+        double valorDecoraciones = decoracionDAO.getAll().stream().mapToDouble(Producto::getPrecio).sum();
+
+        return valorArboles + valorFlores + valorDecoraciones;
     }
+
 
     public void añadirTicket(Ticket ticket) {
         tickets.add(ticket);

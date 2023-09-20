@@ -35,10 +35,7 @@ class Arbol extends Producto {
 
     @Override
     public String toString() {
-
-        return "Árbol con altura de " + altura + " metros. Precio: " + precio;
+        return  "Arbol "  + nombre +  " con altura de "  + altura +  " metros. Precio: " + precio;
     }
-
-
 
 }
