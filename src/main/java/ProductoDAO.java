@@ -56,6 +56,22 @@ public abstract class ProductoDAO {
             throw new RuntimeException("Error al eliminar el producto.", e);
         }
     }
+    public Producto getByName(String nombre) {
+        String sql = "SELECT * FROM " + getTableName() + " WHERE nombre = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, nombre);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return mapResultSetToProducto(rs);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al obtener el producto por nombre.", e);
+        }
+
+        return null;
+    }
+
 
 
     protected abstract String getTableName();

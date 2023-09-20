@@ -1,4 +1,5 @@
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,15 +65,34 @@ public class Floristeria {
 
         return null;
     }
+    public Producto obtenerProductoPorNombre(String nombre, ProductoDAO arbolDAO, ProductoDAO florDAO, ProductoDAO decoracionDAO) {
+        // Buscar en la tabla de árboles
+        Producto producto = arbolDAO.getByName(nombre);
+        if (producto != null) {
+            return producto;
+        }
+
+        // Buscar en la tabla de flores
+        producto = florDAO.getByName(nombre);
+        if (producto != null) {
+            return producto;
+        }
+
+        // Buscar en la tabla de decoraciones
+        producto = decoracionDAO.getByName(nombre);
+        if (producto != null) {
+            return producto;
+        }
+
+        return null; // Si no se encuentra el producto en ninguna tabla
+    }
+
 
 
     public List<Producto> obtenerProductos() {
         return productos;
     }
 
-    /*public double valorTotal() {
-        return productos.stream().mapToDouble(Producto::getPrecio).sum();
-    }*/
     public double valorTotal(ProductoDAO arbolDAO, ProductoDAO florDAO, ProductoDAO decoracionDAO) {
         double valorArboles = arbolDAO.getAll().stream().mapToDouble(Producto::getPrecio).sum();
         double valorFlores = florDAO.getAll().stream().mapToDouble(Producto::getPrecio).sum();
@@ -90,11 +110,27 @@ public class Floristeria {
         return tickets;
     }
 
+    /*public void mostrarComprasAntiguas() {
+        tickets.forEach(System.out::println);
+    }*/
     public void mostrarComprasAntiguas() {
+        System.out.println("Número de tickets: " + tickets.size());
         tickets.forEach(System.out::println);
     }
 
+
     public double totalDineroGanado() {
-        return tickets.stream().mapToDouble(Ticket::calcularTotal).sum();
+       // Imprimir el número de tickets en la lista para depuración
+       System.out.println("Número de tickets: " + tickets.size());
+
+       // Imprimir el total de cada ticket para depuración
+       tickets.forEach(ticket -> System.out.println("Total del ticket " + ticket.getId() + ": " + ticket.calcularTotal()));
+
+       return tickets.stream().mapToDouble(Ticket::calcularTotal).sum();
+   }
+    public void actualizarTicketsDesdeBaseDeDatos(TicketDAO ticketDAO) throws SQLException {
+        this.tickets = ticketDAO.obtenerTodosLosTickets();
     }
+
+
 }

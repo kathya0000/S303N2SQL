@@ -1,4 +1,5 @@
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -50,20 +51,33 @@ public class App {
                     System.out.println("Valor total: " + floristeria.valorTotal(arbolDAO, florDAO, decoracionDAO));
                     break;
 
-                /*case 5:
+                 case 5:
                     try {
                         crearTicketCompra(scanner, floristeria, connection, arbolDAO, florDAO, decoracionDAO);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    break;*/
+                    break;
 
                 case 6:
+                    /*floristeria.mostrarComprasAntiguas();
+                    break;*/
+                    try {
+                        floristeria.actualizarTicketsDesdeBaseDeDatos(ticketDAO);
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
                     floristeria.mostrarComprasAntiguas();
                     break;
 
                 case 7:
-                    System.out.println("Total de dinero ganado: " + floristeria.totalDineroGanado());
+                    try {
+                        floristeria.actualizarTicketsDesdeBaseDeDatos(ticketDAO);
+                        System.out.println("Total de dinero ganado: " + floristeria.totalDineroGanado());
+                    } catch (SQLException e) {
+                        System.out.println("Error al obtener los tickets desde la base de datos.");
+                        e.printStackTrace();
+                    }
                     break;
                 case 8 :
                     try {
@@ -159,7 +173,7 @@ public class App {
                 return; // Salimos del método si el tipo no es reconocido
         }
 
-        floristeria.añadirProducto(producto);
+             floristeria.añadirProducto(producto);
     }
 
     private static void  retirarProducto( Scanner scanner, Floristeria floristeria, ProductoDAO arbolDAO, ProductoDAO florDAO, ProductoDAO decoracionDAO) {
@@ -207,32 +221,38 @@ public class App {
             System.out.println("Producto no encontrado con ID: " + id);
         }
     }
+     private static void crearTicketCompra(Scanner scanner, Floristeria floristeria, Connection connection, ProductoDAO arbolDAO, ProductoDAO florDAO, ProductoDAO decoracionDAO) throws Exception {
+         Ticket ticket = new Ticket();
+         TicketDAO ticketDAO = new TicketDAO(connection, (ArbolDAO) arbolDAO, (FlorDAO) florDAO, (DecoracionDAO) decoracionDAO);
+         String respuesta;
 
+         do {
+             // Mostrar todos los productos disponibles
+             List<Producto> productosDisponibles = floristeria.obtenerProductos();
+             for (Producto producto : productosDisponibles) {
+                 System.out.println(producto.getNombre() + " - " + producto.getPrecio());
+             }
 
-   /* private static void crearTicketCompra(Scanner scanner, Floristeria floristeria, Connection connection, ProductoDAO arbolDAO, ProductoDAO florDAO, ProductoDAO decoracionDAO) throws Exception {
-        Ticket ticket = new Ticket();
-        TicketDAO ticketDAO = new TicketDAO(connection, (ArbolDAO) arbolDAO, (FlorDAO) florDAO, (DecoracionDAO) decoracionDAO);
-        String respuesta;
+             System.out.print("Nombre del producto a comprar: ");
+             String nombreProducto = scanner.next();
 
-        do {
-            System.out.print("ID del producto a comprar: ");
-            int idProducto = scanner.nextInt();
+             Producto productoAComprar = floristeria.obtenerProductoPorNombre(nombreProducto, arbolDAO, florDAO, decoracionDAO);
 
-            int id;
-            Producto productoAComprar = floristeria.obtenerProducto(id,arbolDAO, florDAO, decoracionDAO);
+             if (productoAComprar != null) {
+                 ticket.añadirProducto(productoAComprar);
+             } else {
+                 System.out.println("Producto no encontrado con nombre: " + nombreProducto);
+             }
 
-            if (productoAComprar != null) {
-                ticket.añadirProducto(productoAComprar);
-            } else {
-                System.out.println("Producto no encontrado con ID: " + idProducto);
-            }
+             System.out.print("¿Deseas agregar otro producto al ticket? (si/no) ");
+             respuesta = scanner.next();
+         } while (respuesta.equalsIgnoreCase("si"));
 
-            System.out.print("¿Deseas agregar otro producto al ticket? (si/no) ");
-            respuesta = scanner.next();
-        } while (respuesta.equalsIgnoreCase("si"));
+         int ticketID = ticketDAO.guardar(ticket); // guarda y devuelve el ID generado
+         ticket.setId(ticketID);
+         System.out.println(ticket.toString());
 
-        ticketDAO.guardar(ticket);
-    }*/
+     }
 
     private static void guardarEnBaseDeDatos(Floristeria floristeria) {
         try {

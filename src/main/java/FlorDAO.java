@@ -28,6 +28,11 @@ public class FlorDAO extends ProductoDAO {
     }
 
     @Override
+    public Producto getByName(String nombre) {
+        return super.getByName(nombre);
+    }
+
+    @Override
     public List<Flor> getAll() {
         List<Flor> flores = new ArrayList<>();
         String sql = "SELECT * FROM " + getTableName();

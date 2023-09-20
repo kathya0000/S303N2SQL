@@ -7,12 +7,15 @@ public class Ticket {
     private Date fecha;
     private List<Producto> productosComprados = new ArrayList<>();
 
-    public Ticket() {}
+    public Ticket() {
+        this.fecha = new Date();
+    }
 
     public Ticket(int id, Date fecha) {
         this.id = id;
         this.fecha = fecha;
     }
+
 
     public void añadirProducto(Producto producto) {
         productosComprados.add(producto);

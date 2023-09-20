@@ -30,6 +30,11 @@ public class ArbolDAO extends ProductoDAO {
     }
 
     @Override
+    public Producto getByName(String nombre) {
+        return super.getByName(nombre);
+    }
+
+    @Override
     public List<Arbol> getAll() {
         List<Arbol> arboles = new ArrayList<>();
         String sql = "SELECT * FROM " + getTableName();

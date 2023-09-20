@@ -51,6 +51,11 @@ public class DecoracionDAO extends ProductoDAO {
         return super.get(id);
     }
 
+    @Override
+    public Producto getByName(String nombre) {
+        return super.getByName(nombre);
+    }
+
     public List<Decoracion> getAll() {
         List<Decoracion> decoraciones = new ArrayList<>();
         String sql = "SELECT * FROM " + getTableName();

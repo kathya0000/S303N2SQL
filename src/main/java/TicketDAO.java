@@ -1,4 +1,5 @@
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TicketDAO {
@@ -59,23 +60,26 @@ public class TicketDAO {
         }
         return ticket;
     }
-    public void guardar (Ticket ticket) throws Exception {
-        String query = "INSERT INTO tickets (fecha, total) VALUES (?, ?)";
+   public int guardar(Ticket ticket) throws Exception {
+       String query = "INSERT INTO tickets (fecha, total) VALUES (?, ?)";
+       int generatedId = 0;  // Variable para almacenar el ID generado
 
-        try (Connection con = DriverManager.getConnection(url, user, password);
-             PreparedStatement pst = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+       try (Connection con = DriverManager.getConnection(url, user, password);
+            PreparedStatement pst = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
-            pst.setDate(1, new java.sql.Date(ticket.getFecha().getTime()));
-            pst.setDouble(2, ticket.calcularTotal());
-            pst.executeUpdate();
+           pst.setDate(1, new java.sql.Date(ticket.getFecha().getTime()));
+           pst.setDouble(2, ticket.calcularTotal());
+           pst.executeUpdate();
 
-            ResultSet generatedKeys = pst.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                int ticketId = generatedKeys.getInt(1);
-                guardarProductosEnTicket(ticket.getProductosComprados(), ticketId);
-            }
-        }
-    }
+           ResultSet generatedKeys = pst.getGeneratedKeys();
+           if (generatedKeys.next()) {
+               generatedId = generatedKeys.getInt(1);  // Almacena el ID generado
+               guardarProductosEnTicket(ticket.getProductosComprados(), generatedId);
+           }
+       }
+       return generatedId;  // Devuelve el ID generado
+   }
+
 
     private void guardarProductosEnTicket (List< Producto > productos, int ticketId) throws Exception {
         String query = "INSERT INTO ticket_items (ticket_id, tipo_producto, producto_id, precio_unitario) VALUES (?, ?, ?, ?)";
@@ -121,6 +125,50 @@ public class TicketDAO {
             guardarProductosEnTicket(ticket.getProductosComprados(), ticket.getId());
         }
     }
+
+   public List<Ticket> obtenerTodosLosTickets() throws SQLException {
+       List<Ticket> listaTickets = new ArrayList<>();
+       String query = "SELECT * FROM tickets";
+       try (PreparedStatement pst = conn.prepareStatement(query)) {
+           ResultSet rs = pst.executeQuery();
+           while (rs.next()) {
+               Ticket ticket = new Ticket();
+               ticket.setId(rs.getInt("id"));
+               ticket.setFecha(rs.getDate("fecha"));
+
+               // Recuperar los productos asociados a este ticket
+               String queryProductos = "SELECT * FROM ticket_items WHERE ticket_id = ?";
+               try (PreparedStatement pstProductos = conn.prepareStatement(queryProductos)) {
+                   pstProductos.setInt(1, ticket.getId());
+                   ResultSet rsProductos = pstProductos.executeQuery();
+                   while (rsProductos.next()) {
+                       int productoId = rsProductos.getInt("producto_id");
+                       String tipoProducto = rsProductos.getString("tipo_producto");
+                       Producto producto = null;
+                       switch (tipoProducto) {
+                           case "arbol":
+                               producto = arbolDAO.get(productoId);
+                               break;
+                           case "flor":
+                               producto = florDAO.get(productoId);
+                               break;
+                           case "decoracion":
+                               producto = decoracionDAO.get(productoId);
+                               break;
+                       }
+                       if (producto != null) {
+                           ticket.añadirProducto(producto);
+                       }
+                   }
+               }
+
+               listaTickets.add(ticket);
+           }
+       }
+       return listaTickets;
+   }
+
+
 
 
     public void eliminar ( int id) throws Exception {
